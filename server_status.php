@@ -7,25 +7,62 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// ฟังก์ชันตรวจสอบสถานะเซิร์ฟเวอร์
-function checkServerStatus($address) {
+// ฟังก์ชันตรวจสอบสถานะเซิร์ฟเวอร์ (เร็ว)
+function checkServerStatus($address, $timeout = 2) {
+    // ถ้าเป็น IP address
     if (filter_var($address, FILTER_VALIDATE_IP)) {
-        $output = shell_exec("ping -c 1 " . escapeshellarg($address) . " 2>&1");
-        return (strpos($output, 'received') !== false || strpos($output, '1 packets transmitted, 1 received') !== false) ? 'Online' : 'Offline';
+        $host = $address;
+        $port = 80;
     } else {
-        $ch = curl_init($address);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // ถ้าเป็น URL/Domain
+        $parsed = parse_url($address);
+        $host = $parsed['host'] ?? $address;
+        $port = $parsed['port'] ?? 80;
         
-        curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        return ($httpCode >= 200 && $httpCode < 400) ? 'Online' : 'Offline';
+        // ถ้าไม่มี protocol ให้เพิ่ม http://
+        if (empty($parsed['scheme'])) {
+            $address = 'http://' . $address;
+        }
     }
+    
+    // ใช้ fsockopen เพื่อตรวจสอบ connection
+    $fp = @fsockopen($host, $port, $errno, $errstr, $timeout);
+    if ($fp) {
+        fclose($fp);
+        return 'Online';
+    }
+    return 'Offline';
+}
+
+// ฟังก์ชันตรวจสอบสถานะแบบละเอียด (ตรวจ HTTP status)
+function checkServerStatusDetailed($address, $timeout = 2) {
+    if (filter_var($address, FILTER_VALIDATE_IP)) {
+        $host = $address;
+        $port = 80;
+    } else {
+        $parsed = parse_url($address);
+        $host = $parsed['host'] ?? $address;
+        $port = $parsed['port'] ?? 80;
+    }
+    
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL => (filter_var($address, FILTER_VALIDATE_IP) ? 'http://' : '') . $address,
+        CURLOPT_TIMEOUT => $timeout,
+        CURLOPT_CONNECTTIMEOUT => $timeout,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_NOBODY => true,
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_FAILONERROR => false,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => false,
+    ]);
+    
+    @curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    return ($httpCode >= 200 && $httpCode < 400) ? 'Online' : 'Offline';
 }
 
 // ดึงข้อมูลเซิร์ฟเวอร์ทั้งหมด
@@ -95,6 +132,10 @@ $servers = $result;
         .btn-back {
             margin-bottom: 20px;
         }
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -147,7 +188,7 @@ $servers = $result;
             </div>
             <div class="stat-card">
                 <div>
-                    <button class="btn btn-sm btn-primary" onclick="refreshStatus()">
+                    <button class="btn btn-sm btn-primary" id="refresh-btn" onclick="refreshStatus()">
                         <i class="bi bi-arrow-clockwise"></i> รีเฟรช
                     </button>
                 </div>
@@ -214,6 +255,11 @@ $servers = $result;
     <script>
         // ฟังก์ชันอัปเดตสถานะ
         async function refreshStatus() {
+            const btn = document.getElementById('refresh-btn');
+            btn.disabled = true;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังตรวจสอบ...';
+            
             try {
                 const response = await fetch('check_status.php');
                 if (!response.ok) {
@@ -264,7 +310,9 @@ $servers = $result;
             } catch (error) {
                 console.error('ข้อผิดพลาด:', error);
                 alert('ไม่สามารถอัปเดตสถานะได้');
-                location.reload();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
             }
         }
 
