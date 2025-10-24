@@ -1,7 +1,7 @@
 <?php
 /**
  * Server Status Checker with Telegram Notification
- * ตรวจสอบสถานะเซิร์ฟเวอร์และส่งแจ้งเตือนผ่าน Telegram
+ * ตรวจสอบสถานะเซิร์ฟเวอร์และส่งแจ้งเตือนผ่าน Telegram KORN
  */
 
 require_once 'config.php';
