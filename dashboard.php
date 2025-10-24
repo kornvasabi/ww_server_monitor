@@ -2,7 +2,7 @@
 session_start();
 require_once 'config.php';
 
-// ตรวจสอบว่าผู้ใช้เข้าสู่ระบบแล้วหรือไม่
+// ตรวจสอบว่าผู้ใช้เข้าสู่ระบบแล้วหรือไม่ KORN
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
