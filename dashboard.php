@@ -31,7 +31,7 @@ function checkServerStatus($address, $timeout = 2) {
 }
 
 // ดึงข้อมูลเซิร์ฟเวอร์ทั้งหมด
-$query = "SELECT id, name, address FROM servers";
+$query = "SELECT id, name, address, is_active FROM servers";
 $result = $conn->query($query);
 $servers = $result;
 ?>
@@ -347,6 +347,7 @@ $servers = $result;
                         <table class="table table-striped table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
+                                    <th>#</th>
                                     <th>ชื่อเซิร์ฟเวอร์</th>
                                     <th>ที่อยู่</th>
                                     <th class="text-center" style="width: 15%">สถานะ</th>
@@ -361,7 +362,13 @@ $servers = $result;
                                             $status = checkServerStatus($server['address']);
                                             $status_class = ($status == 'Online') ? 'bg-success' : 'bg-danger';
                                         ?>
-                                        <tr id="server-row-<?php echo $server['id']; ?>"> 
+                                        <tr id="server-row-<?php echo $server['id']; ?>">
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchactiveserver" data-item-id="<?php echo $server['id']; ?>" <?php echo ($server['is_active'] == true) ? 'checked' : ''; ?>>
+                                                    <label class="form-check-label" for="flexSwitchCheckCheckedDisabled"></label>
+                                                </div>
+                                            </td>
                                             <td>
                                                 <strong><?php echo htmlspecialchars($server['name']); ?></strong>
                                             </td>
@@ -581,6 +588,13 @@ $servers = $result;
             // ตั้งให้มีการอัปเดตสถานะทุกๆ 60 วินาที
             setInterval(updateServerStatus, 60000); 
         });
+
+        // รอให้หน้าเว็บโหลดเสร็จก่อน
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleSwitch = document.getElementById('switchactiveserver');
+        });
+        
     </script>
 
 </body>
