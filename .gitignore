@@ -1,2 +1,4 @@
 config.php
 check_servers_telegram.php
+server_check.log
+server_states.json
