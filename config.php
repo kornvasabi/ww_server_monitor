@@ -1,5 +1,5 @@
 <?php
-// เริ่มต้น session
+// เริ่มต้น session ทดสอบ gitignore
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
