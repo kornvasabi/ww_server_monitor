@@ -13,8 +13,8 @@ define('TELEGRAM_CHAT_ID', '7754054025');     // ใส่ Chat ID
 
 // ========== การตั้งค่าการทำงาน ==========
 define('TIMEOUT', 10); // Timeout สำหรับการเชื่อมต่อ (วินาที)
-// define('LOG_FILE', __DIR__ . '/server_check.log'); // ไฟล์ Log
-// define('STATE_FILE', __DIR__ . '/server_states.json'); // เก็บสถานะเซิร์ฟเวอร์
+define('LOG_FILE', __DIR__ . '/server_check.log'); // ไฟล์ Log
+define('STATE_FILE', __DIR__ . '/server_states.json'); // เก็บสถานะเซิร์ฟเวอร์
 
 // ========== ฟังก์ชันส่งข้อความผ่าน Telegram ==========
 function sendTelegramMessage($message) {

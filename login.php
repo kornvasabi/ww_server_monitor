@@ -26,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $username;
+            
             header("Location: dashboard.php");
             exit();
         }
@@ -70,11 +71,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
+            
             <?php if (!empty($error_message)): ?>
                 <div class="alert alert-danger mt-3" role="alert">
                     <?php echo $error_message; ?>
                 </div>
             <?php endif; ?>
+
         </div>
     </div>
 
