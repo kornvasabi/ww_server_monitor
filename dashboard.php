@@ -327,6 +327,9 @@ $servers = $result;
                         <a href="server_status.php" class="btn btn-secondary btn-sm">
                             <i class="bi bi-fullscreen"></i> เต็มหน้า
                         </a>
+                        <a href="check_server.php" class="btn btn-danger btn-sm">
+                            <i class="bi bi-pencil-square"></i> settime_checkserver
+                        </a>
                     </div>
                 </div>
             </div>
@@ -586,7 +589,7 @@ $servers = $result;
             searchInput.addEventListener('change', filterServers);
 
             // ตั้งให้มีการอัปเดตสถานะทุกๆ 60 วินาที
-            setInterval(updateServerStatus, 60000); 
+            setInterval(updateServerStatus, 6000000); 
         });
 
         // รอให้หน้าเว็บโหลดเสร็จก่อน
