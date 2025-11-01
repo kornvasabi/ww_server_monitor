@@ -328,7 +328,7 @@ $servers = $result;
                             <i class="bi bi-fullscreen"></i> เต็มหน้า
                         </a>
                         <a href="check_server.php" class="btn btn-danger btn-sm">
-                            <i class="bi bi-pencil-square"></i> settime_checkserver
+                            <i class="bi bi-pencil-square"></i> settime_checkserver_test
                         </a>
                     </div>
                 </div>
