@@ -1,4 +1,18 @@
+# Configuration files (มีข้อมูลส่วนตัว เช่น API keys, passwords)
 config.php
+
+# Telegram bot script (อาจมีข้อมูลการตั้งค่าเฉพาะ)
 check_servers_telegram.php
+
+# Log files (ไฟล์ log ที่เปลี่ยนแปลงบ่อย)
 server_check.log
+*.log
+
+# State files (ไฟล์เก็บสถานะที่เปลี่ยนแปลงบ่อย)
 server_states.json
+
+# General ignore patterns
+*.tmp
+*.cache
+.DS_Store
+Thumbs.db
