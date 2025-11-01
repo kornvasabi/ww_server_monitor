@@ -593,11 +593,17 @@ $servers = $result;
         });
 
         // รอให้หน้าเว็บโหลดเสร็จก่อน
+<<<<<<< Updated upstream
         
         document.addEventListener('DOMContentLoaded', () => {
             const toggleSwitch = document.getElementById('switchactiveserver');
         });
         
+=======
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleSwitch = document.getElementById('switchactiveserver');
+        });
+>>>>>>> Stashed changes
     </script>
 
 </body>
