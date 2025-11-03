@@ -350,6 +350,12 @@
                 <button class="btn-secondary" onclick="downloadLog()">
                     <span>💾</span> Save Log
                 </button>
+                
+                <a href="dashboard.php">
+                    <button class="btn-secondary">
+                        <span>💾</span> หน้าหลัก
+                    </button>
+                </a>
             </div>
 
             <div class="log-container" id="logContainer">
