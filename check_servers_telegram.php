@@ -125,7 +125,7 @@ try {
     $currentStates = [];
 
     // ดึงข้อมูลเซิร์ฟเวอร์จากฐานข้อมูล
-    $query = "SELECT id, name, address FROM servers ORDER BY id ASC";
+    $query = "SELECT id, name, address FROM servers where is_active = 1 ORDER BY id ASC";
     $result = $conn->query($query);
 
     if (!$result) {

@@ -369,8 +369,9 @@ $servers = $result;
                                         <tr id="server-row-<?php echo $server['id']; ?>">
                                             <td>
                                                 <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchactiveserver" data-item-id="<?php echo $server['id']; ?>" <?php echo ($server['is_active'] == true) ? 'checked' : ''; ?>>
-                                                    <label class="form-check-label" for="flexSwitchCheckCheckedDisabled"></label>
+                                                    <input class="form-check-input switchactiveserver" type="checkbox" role="switch" 
+                                                           data-item-id="<?php echo $server['id']; ?>" 
+                                                           <?php echo ($server['is_active'] == 1) ? 'checked' : ''; ?>>
                                                 </div>
                                             </td>
                                             <td>
@@ -395,7 +396,7 @@ $servers = $result;
                                         </tr>
                                     <?php endwhile;
                                 } else {
-                                    echo '<tr><td colspan="4" class="text-center py-4 text-muted">ไม่พบเซิร์ฟเวอร์ใดๆ</td></tr>';
+                                    echo '<tr><td colspan="5" class="text-center py-4 text-muted">ไม่พบเซิร์ฟเวอร์ใดๆ</td></tr>';
                                 }
                                 ?>
                             </tbody>
@@ -460,9 +461,9 @@ $servers = $result;
             // ค้นหา Desktop Table
             const tableRows = document.querySelectorAll('#servers-table-body tr');
             tableRows.forEach(row => {
-                const serverName = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
-                const serverAddress = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-                const serverStatus = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
+                const serverName = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+                const serverAddress = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
+                const serverStatus = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() || '';
 
                 const match = serverName.includes(searchInput) || 
                              serverAddress.includes(searchInput) || 
@@ -489,15 +490,13 @@ $servers = $result;
 
                 if (match) {
                     card.style.display = 'block';
-                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
 
             // อัปเดตจำนวนผลการค้นหา
-            const totalServers = document.querySelectorAll('#servers-table-body tr').length + 
-                                document.querySelectorAll('.mobile-server-card').length;
+            const totalServers = tableRows.length;
             const searchCount = document.getElementById('search-count');
             
             if (searchInput === '') {
@@ -591,20 +590,58 @@ $servers = $result;
 
             // ตั้งให้มีการอัปเดตสถานะทุกๆ 60 วินาที
             setInterval(updateServerStatus, 6000000); 
-        });
 
-        // รอให้หน้าเว็บโหลดเสร็จก่อน
-<<<<<<< Updated upstream
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleSwitch = document.getElementById('switchactiveserver');
+            // ==================== ส่วนจัดการ Toggle Active ====================
+            const toggleSwitches = document.querySelectorAll('.switchactiveserver');
+            
+            console.log('Found', toggleSwitches.length, 'toggle switches');
+            
+            toggleSwitches.forEach(toggleSwitch => {
+                toggleSwitch.addEventListener('change', async function() {
+                    const serverId = this.getAttribute('data-item-id');
+                    const isActive = this.checked ? 1 : 0;
+                    
+                    console.log('Toggle clicked - Server ID:', serverId, 'Active:', isActive);
+                    
+                    // แสดง loading (ปิดการใช้งาน checkbox ชั่วคราว)
+                    this.disabled = true;
+                    
+                    try {
+                        const response = await fetch('actions/toggle_active.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                id: serverId,
+                                is_active: isActive
+                            })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            console.log('✓ อัปเดตสถานะสำเร็จ:', result);
+                        } else {
+                            console.error('✗ อัปเดตไม่สำเร็จ:', result.message);
+                            alert('ไม่สามารถอัปเดตสถานะได้: ' + result.message);
+                            
+                            // คืนค่า checkbox เดิม
+                            this.checked = !this.checked;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('เกิดข้อผิดพลาด: ' + error.message);
+                        
+                        // คืนค่า checkbox เดิม
+                        this.checked = !this.checked;
+                    } finally {
+                        // เปิดการใช้งาน checkbox อีกครั้ง
+                        this.disabled = false;
+                    }
+                });
+            });
         });
-        
-=======
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleSwitch = document.getElementById('switchactiveserver');
-        });
->>>>>>> Stashed changes
     </script>
 
 </body>
