@@ -418,6 +418,12 @@ $servers = $result;
                             <div class="mobile-card-name">
                                 <i class="bi bi-circle-fill" style="font-size: 0.6rem; color: <?php echo $status_color; ?>"></i>
                                 <?php echo htmlspecialchars($server['name']); ?>
+                                
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input switchactiveserver" type="checkbox" role="switch" data-item-id="<?php echo $server['id']; ?>" 
+                                        <?php echo ($server['is_active'] == 1) ? 'checked' : ''; ?>>
+                                </div>
+
                             </div>
                             <div class="mobile-card-address">
                                 <?php echo htmlspecialchars($server['address']); ?>
